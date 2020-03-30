@@ -18,7 +18,7 @@ resource "azurerm_kubernetes_cluster" "akscluster1" {
   }
   node_resource_group = "${var.rg_name}-aks-resources"
   service_principal {
-    client_id     = "32d3f75a-2567-447e-a877-d3bef59eea2c"
-    client_secret = "rSAn12xD4a?yP.GpfO_.CsnPNEHU2Xnk"
+    client_id     = "${var.client_id}"
+    client_secret = "${var.client_secret}"
   }
 }
