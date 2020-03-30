@@ -12,7 +12,7 @@ The final step of this demo is to view the web application from the internet. Th
 1. <b>You will need a Terraform client.</b> 
 I personally use an Ubuntu 18.04 machine and for this demo I used Terraform version 0.12.12
 2. <b>You need details of a ServicePrincipal in Azure.</b>
-In this demo your Azure account will be accessed by Terraform using a Service Principal. You can set up a ServicePrincipal by following these instructions. In my example, I use a ServicePrincipal and client secret, but you can also authenticate with client certificate, or Managed Service Identity. The SP should have contributor access in the subscription.
+In this demo your Azure account will be accessed by Terraform using a Service Principal. You can set up a ServicePrincipal by following these instructions. In my example, I use a ServicePrincipal and client secret, but you can also authenticate with client certificate, or Managed Service Identity. <b>The SP should have contributor access in the subscription.</b>
 
 ## Instructions
 
