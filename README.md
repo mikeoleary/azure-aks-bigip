@@ -36,6 +36,8 @@ We now need to update the file called variables.tf in the root module to reflect
 
 You want your variables.tf file to include this below. Obviously, replace my xxx with your SP details, and you can create your own prefix value and Azure location if you wish. Of course, in production, use a better password than below.
 
+<b>Your variable of "prefix" should be unique and all lower case.</b> It will be used to create a Resource Group, along with other resource types.
+
 
 
     #Azure SP cred details
