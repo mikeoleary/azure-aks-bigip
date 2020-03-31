@@ -78,6 +78,10 @@ module "cis" {
   f5vm01int  = "${cidrhost(module.vnet.internal_subnet_prefix, 10)}"
   f5vm02int  = "${cidrhost(module.vnet.internal_subnet_prefix, 11)}"
   upassword = "${var.upassword}"
+  #make this module dependent on creation of AKS
+  dependencies = [
+    "${module.aks.depended_on}"
+  ]
 }
 
 module "azureVoteApp" {
@@ -93,4 +97,8 @@ module "azureVoteApp" {
   #variables for k8s app
   f5vm01ext_sec = "${cidrhost(module.vnet.external_subnet_prefix, 100)}"
   f5vm02ext_sec = "${cidrhost(module.vnet.external_subnet_prefix, 101)}"
+  #make this module dependent on creation of CIS
+  dependencies = [
+    "${module.cis.depended_on}"
+  ]
 }

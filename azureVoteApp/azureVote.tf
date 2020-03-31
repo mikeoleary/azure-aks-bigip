@@ -1,8 +1,15 @@
+resource "null_resource" "dependency_getter" {
+  provisioner "local-exec" {
+    command = "echo ${length(var.dependencies)}"
+  }
+}
+
 #Create namespace
 resource "kubernetes_namespace" "azurevote" {
   metadata {
     name = "azurevote"
   }
+  depends_on    = ["null_resource.dependency_getter"]
 }
 
 #Deploy AzureVote App
@@ -40,9 +47,7 @@ resource "kubernetes_deployment" "azurevote-backend-deployment" {
       }
     }
   }
-  depends_on = [
-    #"${var.helm_release_name}"
-  ]
+  depends_on    = ["null_resource.dependency_getter"]
 }
 
 resource "kubernetes_service" "azure-vote-back" {
@@ -62,9 +67,7 @@ resource "kubernetes_service" "azure-vote-back" {
     }
     type = "ClusterIP"
   }
-  depends_on = [
-    #"aws_eks_node_group.demo"
-  ]
+  depends_on    = ["null_resource.dependency_getter"]
 }
 resource "kubernetes_deployment" "azurevote-frontend-deployment" {
   metadata {
@@ -128,9 +131,6 @@ resource "kubernetes_service" "azure-vote-front" {
     }
     type = "ClusterIP"
   }
-  depends_on = [
-    #"aws_eks_node_group.demo"
-  ]
 }
 
 data "template_file" "azurevote_configmap" {
@@ -139,6 +139,7 @@ data "template_file" "azurevote_configmap" {
     private_ip1 = "${var.f5vm01ext_sec}"
     private_ip2 = "${var.f5vm02ext_sec}"
   }
+  depends_on    = ["null_resource.dependency_getter"]
 }
 
 # deploy Kubernetes ConfigMap resource
