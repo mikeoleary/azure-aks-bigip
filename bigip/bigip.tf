@@ -474,7 +474,13 @@ resource "azurerm_virtual_machine" "f5vm02" {
 # Run Startup Script
 resource "azurerm_virtual_machine_extension" "f5vm01-run-startup-cmd" {
   name                 = "${var.environment}-f5vm01-run-startup-cmd"
-  depends_on           = ["azurerm_virtual_machine.f5vm01"]
+  depends_on           = [
+    "azurerm_virtual_machine.f5vm01",
+    "azurerm_network_interface_security_group_association.nsgassociation1",
+    "azurerm_network_interface_security_group_association.nsgassociation2",
+    "azurerm_network_interface_security_group_association.nsgassociation3",
+    "azurerm_network_interface_security_group_association.nsgassociation4"
+  ]
   #location             = "${var.region}"
   #location             = "${var.location}"
   #resource_group_name  = "${var.rg_name}"
@@ -496,7 +502,13 @@ resource "azurerm_virtual_machine_extension" "f5vm01-run-startup-cmd" {
 
 resource "azurerm_virtual_machine_extension" "f5vm02-run-startup-cmd" {
   name                 = "${var.environment}-f5vm02-run-startup-cmd"
-  depends_on           = ["azurerm_virtual_machine.f5vm02"]
+  depends_on           = [
+    "azurerm_virtual_machine.f5vm02",
+    "azurerm_network_interface_security_group_association.nsgassociation1",
+    "azurerm_network_interface_security_group_association.nsgassociation2",
+    "azurerm_network_interface_security_group_association.nsgassociation3",
+    "azurerm_network_interface_security_group_association.nsgassociation4"
+    ]
   #location             = "${var.region}"
   #location             = "${var.location}"
   #resource_group_name  = "${var.rg_name}"

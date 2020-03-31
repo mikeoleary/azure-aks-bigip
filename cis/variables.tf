@@ -10,3 +10,7 @@ variable cluster_ca_certificate { default = "" }
 variable f5vm01int { default = ""}
 variable f5vm02int { default = ""}
 variable upassword { default = ""}
+variable "dependencies" {
+  type    = "list"
+  default = []
+}
