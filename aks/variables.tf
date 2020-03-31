@@ -19,7 +19,7 @@ variable "dns_service_ip" {
 variable "docker_bridge_cidr" {
   default = ""
 }
-
+variable "prefix" {}
 #variables for AzureRM provider
 variable "client_id" {  default = ""}
 variable "subscription_id" {  default = ""}

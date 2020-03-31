@@ -19,6 +19,7 @@ module "aks" {
   #variables for resource creation
   int_subnet_id = "${module.vnet.internal_subnet_id}"
   location = "${module.vnet.rg_location}"
+  prefix = "${var.prefix}"
   rg_name = "${module.vnet.rg_name}"
   service_cidr = "172.16.0.0/16"
   dns_service_ip = "172.16.0.10"
