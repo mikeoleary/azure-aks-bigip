@@ -22,3 +22,8 @@ resource "azurerm_kubernetes_cluster" "akscluster1" {
     client_secret = "${var.client_secret}"
   }
 }
+resource "null_resource" "dependency_setter" {
+  depends_on = [
+    "azurerm_kubernetes_cluster.akscluster1"
+  ]
+}

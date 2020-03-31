@@ -1,3 +1,9 @@
+resource "null_resource" "dependency_getter" {
+  provisioner "local-exec" {
+    command = "echo ${length(var.dependencies)}"
+  }
+}
+
 #Confinger a service account for tiller
 resource "kubernetes_cluster_role_binding" "tiller" {
   metadata {
@@ -14,6 +20,7 @@ resource "kubernetes_cluster_role_binding" "tiller" {
     name = "cluster-admin"
     api_group="rbac.authorization.k8s.io"
   }
+  depends_on    = ["null_resource.dependency_getter"]
 } 
 
 resource "kubernetes_service_account" "tiller" {
@@ -22,6 +29,7 @@ resource "kubernetes_service_account" "tiller" {
     namespace = "kube-system"
   }
   automount_service_account_token = true
+  depends_on    = ["null_resource.dependency_getter"]
 }
 resource "kubernetes_secret" "f5cis" {
   metadata {
@@ -34,6 +42,7 @@ resource "kubernetes_secret" "f5cis" {
     password = "${var.upassword}"
   }
   #type = "kubernetes.io/service-account-token"
+  depends_on    = ["null_resource.dependency_getter"]
 }
 
 data "helm_repository" "f5-stable" {
@@ -102,3 +111,9 @@ resource "helm_release" "f5cis2" {
   ]
 }
 
+resource "null_resource" "dependency_setter" {
+  depends_on = [
+    "helm_release.f5cis",
+    "helm_release.f5cis2"
+  ]
+}

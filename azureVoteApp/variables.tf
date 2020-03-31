@@ -9,3 +9,7 @@ variable kube_password { default = "" }
 variable client_certificate { default = "" }
 variable client_key { default = "" }
 variable cluster_ca_certificate { default = "" }
+variable "dependencies" {
+  type    = "list"
+  default = []
+}
