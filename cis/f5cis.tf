@@ -58,6 +58,10 @@ resource "helm_release" "f5cis" {
     value = "true"  
   }
   set {
+    name = "args.agent"
+    value = "as3"
+  }
+  set {
     name  = "bigip_login_secret"
     value = "${kubernetes_secret.f5cis.metadata[0].name}"
   }

@@ -16,6 +16,23 @@ resource "azurerm_public_ip" "vm02mgmtpip" {
   allocation_method            = "Static"
 }
 
+resource "azurerm_public_ip" "vm01extpip" {
+  name                         = "${var.prefix}-vm01-ext-pip"
+  location                     = "${var.location}"
+  resource_group_name          = "${var.rg_name}"
+  sku                          = "Standard"
+  allocation_method            = "Static"
+}
+
+resource "azurerm_public_ip" "vm02extpip" {
+  name                         = "${var.prefix}-vm02-ext-pip"
+  location                     = "${var.location}"
+  resource_group_name          = "${var.rg_name}"
+  sku                          = "Standard"
+  allocation_method            = "Static"
+}
+
+
 resource "azurerm_public_ip" "lbpip" {
   name                         = "${var.prefix}-lb-pip"
   location                     = "${var.location}"
@@ -196,6 +213,7 @@ resource "azurerm_network_interface" "vm01-ext-nic" {
     subnet_id                     = "${var.external_subnet_id}"
     private_ip_address_allocation = "Static"
     private_ip_address            = "${var.f5vm01ext}"
+    public_ip_address_id          = "${azurerm_public_ip.vm01extpip.id}"
     primary			  = true
   }
 
@@ -218,6 +236,7 @@ resource "azurerm_network_interface" "vm02-ext-nic" {
     subnet_id                     = "${var.external_subnet_id}"
     private_ip_address_allocation = "Static"
     private_ip_address            = "${var.f5vm02ext}"
+    public_ip_address_id          = "${azurerm_public_ip.vm02extpip.id}"
     primary			  = true
   }
 
@@ -551,15 +570,15 @@ resource "null_resource" "f5vm01-run-REST" {
     EOF
   }
 
-  # Running AS3 REST API
-  provisioner "local-exec" {
-    command = <<-EOF
-      #!/bin/bash
-#      sleep 15
-      curl -k -X ${var.rest_as3_method} https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_as3_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm_as3_file}
-    EOF
+#   # Running AS3 REST API
+#   provisioner "local-exec" {
+#     command = <<-EOF
+#       #!/bin/bash
+# #      sleep 15
+#       curl -k -X ${var.rest_as3_method} https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_as3_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm_as3_file}
+#     EOF
+#   }
   }
-}
 
 resource "null_resource" "f5vm02-run-REST" {
   depends_on = [
@@ -580,13 +599,13 @@ resource "null_resource" "f5vm02-run-REST" {
   }
 
   # Running AS3 REST API
-  provisioner "local-exec" {
-    command = <<-EOF
-      #!/bin/bash
-#      sleep 10
-      curl -k -X ${var.rest_as3_method} https://${data.azurerm_public_ip.vm02mgmtpip.ip_address}${var.rest_as3_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm_as3_file}
-    EOF
-  }
+#   provisioner "local-exec" {
+#     command = <<-EOF
+#       #!/bin/bash
+# #      sleep 10
+#       curl -k -X ${var.rest_as3_method} https://${data.azurerm_public_ip.vm02mgmtpip.ip_address}${var.rest_as3_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm_as3_file}
+#     EOF
+#   }
 }
 
 ## OUTPUTS ###
