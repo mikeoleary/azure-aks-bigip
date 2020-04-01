@@ -38,6 +38,7 @@ You want your variables.tf file to include this below. Obviously, replace my xxx
 
 <b>Your variable of "prefix" should be unique and all lower case.</b> It will be used to create a Resource Group, along with other resource types.
 
+<b>Your variable of "upassword" should be over 12 characters and contain 3 of the following 4 character types: lower case, upper case, numbers, and special characters.</b> It will be used as the password on the F5 BIG-IP devices, along with the windowsProfile on the AKS cluster.
 
 
     #Azure SP cred details
@@ -48,7 +49,7 @@ You want your variables.tf file to include this below. Obviously, replace my xxx
     #BIG-IP variables
     variable "prefix" {default = "someuniquevalue"}
     variable "uname" {default = "azureuser"}
-    variable "upassword" {default = "Default12345"}
+    variable "upassword" {default = "Default12345!"}
     variable "location" {default = "East US 2"}
     #Network variables
     variable "network_cidr" {default = "10.0.0.0/16"}

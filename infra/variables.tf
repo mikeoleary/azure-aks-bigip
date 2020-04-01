@@ -6,7 +6,7 @@ variable "tenant_id" {default = ""}
 #BIG-IP variables
 variable "prefix" {default = "molearytue"}
 variable "uname" {default = "azureuser"}
-variable "upassword" {default = "Default12345"}
+variable "upassword" {default = "Default12345!"}
 variable "location" {default = "East US 2"}
 #Network variables
 variable "network_cidr" {default = "10.0.0.0/16"}

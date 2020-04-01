@@ -20,6 +20,8 @@ variable "docker_bridge_cidr" {
   default = ""
 }
 variable "prefix" {}
+variable "admin_username" {}
+variable "admin_password" {}
 #variables for AzureRM provider
 variable "client_id" {  default = ""}
 variable "subscription_id" {  default = ""}

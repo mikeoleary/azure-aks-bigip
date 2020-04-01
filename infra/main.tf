@@ -29,6 +29,8 @@ module "aks" {
   tenant_id	    = "${var.tenant_id}"
   client_id	    = "${var.client_id}"
   client_secret   = "${var.client_secret}"
+  admin_username = "${var.uname}"
+  admin_password = "${var.upassword}"
 }
 
 module "bigip" {
@@ -64,41 +66,24 @@ module "bigip" {
   }
 }
 
-module "cis" {
-  source = "./cis"
-  #variables for kubernetes provider
-  kube_host              = "${module.aks.kube_host}"
-  kube_username          = "${module.aks.kube_username}"
-  kube_password          = "${module.aks.kube_password}"
-  client_certificate     = "${module.aks.client_certificate}"
-  client_key             = "${module.aks.client_key}"
-  cluster_ca_certificate = "${module.aks.cluster_ca_certificate}"
-
-  #variables for CIS configuration
-  f5vm01int  = "${cidrhost(module.vnet.internal_subnet_prefix, 10)}"
-  f5vm02int  = "${cidrhost(module.vnet.internal_subnet_prefix, 11)}"
-  upassword = "${var.upassword}"
-  #make this module dependent on creation of AKS
-  dependencies = [
-    "${module.aks.depended_on}"
-  ]
+# Generate a tfvars file for kubernetes provider config
+data "template_file" "tfvars" {
+  template = "${file("${path.module}/terraform.tfvars.example")}"
+  vars = {
+    #variables for CIS configuration
+    f5vm01int = "${cidrhost(module.vnet.internal_subnet_prefix, 10)}"
+    f5vm02int = "${cidrhost(module.vnet.internal_subnet_prefix, 11)}"
+    upassword = "${var.upassword}"
+    #variables for k8s app
+    f5vm01ext_sec = "${cidrhost(module.vnet.external_subnet_prefix, 100)}"
+    f5vm02ext_sec = "${cidrhost(module.vnet.external_subnet_prefix, 101)}"
+    #other variables
+    prefix = "${var.prefix}"
+    rg_name = "${module.vnet.rg_name}"
+  }
 }
 
-module "azureVoteApp" {
-  source = "./azureVoteApp"
-  #variables for kubernetes provider
-  kube_host              = "${module.aks.kube_host}"
-  kube_username          = "${module.aks.kube_username}"
-  kube_password          = "${module.aks.kube_password}"
-  client_certificate     = "${module.aks.client_certificate}"
-  client_key             = "${module.aks.client_key}"
-  cluster_ca_certificate = "${module.aks.cluster_ca_certificate}"
-
-  #variables for k8s app
-  f5vm01ext_sec = "${cidrhost(module.vnet.external_subnet_prefix, 100)}"
-  f5vm02ext_sec = "${cidrhost(module.vnet.external_subnet_prefix, 101)}"
-  #make this module dependent on creation of CIS
-  dependencies = [
-    "${module.cis.depended_on}"
-  ]
+resource "local_file" "tfvars" {
+  content  = "${data.template_file.tfvars.rendered}"
+  filename = "../apps/terraform.tfvars"
 }
