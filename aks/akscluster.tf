@@ -21,6 +21,9 @@ resource "azurerm_kubernetes_cluster" "akscluster1" {
     client_id     = "${var.client_id}"
     client_secret = "${var.client_secret}"
   }
+  windows_profile {
+    admin_username = "${var.admin_username}"
+  }
 }
 resource "null_resource" "dependency_setter" {
   depends_on = [
