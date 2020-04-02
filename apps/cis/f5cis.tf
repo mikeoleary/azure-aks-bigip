@@ -53,7 +53,7 @@ resource "helm_release" "f5cis" {
     name  = "args.bigip_partition"
     value = "kubernetes"  
   }
-    set {
+  set {
     name  = "args.insecure"
     value = "true"  
   }
