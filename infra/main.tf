@@ -80,6 +80,11 @@ data "template_file" "tfvars" {
     #other variables
     prefix = "${var.prefix}"
     rg_name = "${module.vnet.rg_name}"
+    #azure creds
+    subscription_id = "${var.subscription_id}",
+    client_id = "${var.client_id}",
+    tenant_id = "${var.tenant_id}",
+    client_secret = "${var.client_secret}"
   }
 }
 

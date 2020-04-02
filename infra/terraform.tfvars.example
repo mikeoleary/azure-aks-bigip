@@ -6,3 +6,8 @@ f5vm02ext_sec = "${f5vm02ext_sec}"
 
 prefix = "${prefix}"
 rg_name = "${rg_name}"
+
+subscription_id = "${subscription_id}"
+client_id = "${client_id}"
+tenant_id = "${tenant_id}"
+client_secret = "${client_secret}"
