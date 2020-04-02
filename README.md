@@ -23,21 +23,23 @@ Run git clone to copy the Terraform files we need locally
     git clone https://github.com/mikeoleary/azure-aks-bigip.git
 
 
-We now need to update the file called variables.tf in the root module to reflect your own Service Principle details:
+<b>We will deploy this demo in 2 steps:</b>
+1. We will deploy the <b>infrastructure</b> which consists of Azure VNET and loadbalancer, AKS, and BIG-IP.
+2. We will deploy the <b>apps</b> onto the Kubernetes environment, including F5's CIS.
 
+Change directories to the infra folder. We will then need to update the file called variables.tf to reflect your own Service Principle details:
 
-
-    cd azure-aks-bigip
+    cd azure-aks-bigip/infra
 
 ... and use your favorite editor to update variables.tf, for example:
 
     vi variables.tf
 
-
 You want your variables.tf file to include this below. Obviously, replace my xxx with your SP details, and you can create your own prefix value and Azure location if you wish. Of course, in production, use a better password than below.
 
 <b>Your variable of "prefix" should be unique and all lower case.</b> It will be used to create a Resource Group, along with other resource types.
 
+<b>Your variable of "upassword" should be over 12 characters and contain 3 of the following 4 character types: lower case, upper case, numbers, and special characters.</b> It will be used as the password on the F5 BIG-IP devices, along with the windowsProfile on the AKS cluster.
 
 
     #Azure SP cred details
@@ -48,7 +50,7 @@ You want your variables.tf file to include this below. Obviously, replace my xxx
     #BIG-IP variables
     variable "prefix" {default = "someuniquevalue"}
     variable "uname" {default = "azureuser"}
-    variable "upassword" {default = "Default12345"}
+    variable "upassword" {default = "Default12345!"}
     variable "location" {default = "East US 2"}
     #Network variables
     variable "network_cidr" {default = "10.0.0.0/16"}
@@ -57,14 +59,25 @@ You want your variables.tf file to include this below. Obviously, replace my xxx
     variable "internal_subnet_prefix" {default = "10.0.3.0/24"}
 
 
-Now let's run Terraform! You will need to type "yes" at the last prompt and *you will get billed for resources deployed*.
+Now let's run Terraform and build infrastructure! You will need to type "yes" at the last prompt and *you will get billed for resources deployed*.
+
+    terraform init
+    terraform plan
+    terraform apply 
+
+Now let's <b>change directories</b> and run Terraform and build apps!
+
+    cd ../apps/
+
+You will need to type "yes" at the last prompt.
 
     terraform init
     terraform plan
     terraform apply 
 
 Once this is complete, you should see an output called appUrl. Visit this URL, and you should see a simple demo app (the [Azure vote demo app](https://docs.microsoft.com/en-us/azure/aks/kubernetes-walkthrough)). This demo app is a good example because it involves 2 services within Kubernetes (a front end service, with multiple pods, and a backend service, with one pod). Here is the command to print this output on the screen:
-
+    
+    cd ../infra/ 
     terraform output appUrl
 
 The output of this command is a URL for you to visit. The demo is successful when you see this app below. <b>This microservices app is 2-tier, running in AKS, and exposed to the internet via the F5 BIG-IP. Now, you can apply firewall rules, iRules, SSL termination, or any other F5 app services at your F5 BIG-IP, and still get the benefit of running in AKS.</b>

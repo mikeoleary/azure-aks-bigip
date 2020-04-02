@@ -364,17 +364,6 @@ data "template_file" "vm02_do_json" {
   }
 }
 
-data "template_file" "as3_json" {
-  template = "${file("${path.module}/as3.json")}"
-
-  vars = {
-    rg_name	    = "${var.rg_name}"
-    subscription_id = "${var.SP["subscription_id"]}"
-    tenant_id	    = "${var.SP["tenant_id"]}"
-    client_id	    = "${var.SP["client_id"]}"
-    client_secret   = "${var.SP["client_secret"]}"
-  }
-}
 # Create F5 BIGIP VMs
 resource "azurerm_virtual_machine" "f5vm01" {
   name                         = "${var.prefix}-f5vm01"
@@ -475,11 +464,11 @@ resource "azurerm_virtual_machine" "f5vm02" {
 resource "azurerm_virtual_machine_extension" "f5vm01-run-startup-cmd" {
   name                 = "${var.environment}-f5vm01-run-startup-cmd"
   depends_on           = [
-    "azurerm_virtual_machine.f5vm01",
-    "azurerm_network_interface_security_group_association.nsgassociation1",
-    "azurerm_network_interface_security_group_association.nsgassociation2",
-    "azurerm_network_interface_security_group_association.nsgassociation3",
-    "azurerm_network_interface_security_group_association.nsgassociation4"
+    "azurerm_virtual_machine.f5vm01"
+    #"azurerm_network_interface_security_group_association.nsgassociation1",
+    #"azurerm_network_interface_security_group_association.nsgassociation2",
+    #"azurerm_network_interface_security_group_association.nsgassociation3",
+    #"azurerm_network_interface_security_group_association.nsgassociation4"
   ]
   #location             = "${var.region}"
   #location             = "${var.location}"
@@ -503,11 +492,11 @@ resource "azurerm_virtual_machine_extension" "f5vm01-run-startup-cmd" {
 resource "azurerm_virtual_machine_extension" "f5vm02-run-startup-cmd" {
   name                 = "${var.environment}-f5vm02-run-startup-cmd"
   depends_on           = [
-    "azurerm_virtual_machine.f5vm02",
-    "azurerm_network_interface_security_group_association.nsgassociation1",
-    "azurerm_network_interface_security_group_association.nsgassociation2",
-    "azurerm_network_interface_security_group_association.nsgassociation3",
-    "azurerm_network_interface_security_group_association.nsgassociation4"
+    "azurerm_virtual_machine.f5vm02"
+    #"azurerm_network_interface_security_group_association.nsgassociation1",
+    #"azurerm_network_interface_security_group_association.nsgassociation2",
+    #"azurerm_network_interface_security_group_association.nsgassociation3",
+    #"azurerm_network_interface_security_group_association.nsgassociation4"
     ]
   #location             = "${var.region}"
   #location             = "${var.location}"
@@ -538,18 +527,12 @@ resource "local_file" "vm02_do_file" {
   filename    = "${path.module}/vm02_do_data.json"
 }
 
-resource "local_file" "vm_as3_file" {
-  content     = "${data.template_file.as3_json.rendered}"
-  filename    = "${path.module}/vm_as3_data.json"
-}
-
 resource "null_resource" "f5vm01-run-REST" {
   depends_on = [
     "azurerm_virtual_machine_extension.f5vm01-run-startup-cmd",
     "azurerm_virtual_machine_extension.f5vm02-run-startup-cmd",
     "azurerm_network_interface_security_group_association.nsgassociation3",
-    "local_file.vm01_do_file",
-    "local_file.vm_as3_file"
+    "local_file.vm01_do_file"
     ]
   # Running DO REST API
   provisioner "local-exec" {
@@ -564,13 +547,13 @@ resource "null_resource" "f5vm01-run-REST" {
   }
 
   # Running AS3 REST API
-  provisioner "local-exec" {
-    command = <<-EOF
+#  provisioner "local-exec" {
+#    command = <<-EOF
       #!/bin/bash
 #      sleep 15
-      curl -k -X ${var.rest_as3_method} https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_as3_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm_as3_file}
-    EOF
-  }
+#      curl -k -X ${var.rest_as3_method} https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_as3_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm_as3_file}
+#    EOF
+#  }
 }
 
 resource "null_resource" "f5vm02-run-REST" {
@@ -578,8 +561,7 @@ resource "null_resource" "f5vm02-run-REST" {
     "azurerm_virtual_machine_extension.f5vm01-run-startup-cmd",
     "azurerm_virtual_machine_extension.f5vm02-run-startup-cmd",
     "azurerm_network_interface_security_group_association.nsgassociation4",
-    "local_file.vm02_do_file",
-    "local_file.vm_as3_file"
+    "local_file.vm02_do_file"
     ]
   # Running DO REST API
   provisioner "local-exec" {
@@ -592,13 +574,13 @@ resource "null_resource" "f5vm02-run-REST" {
   }
 
   # Running AS3 REST API
-  provisioner "local-exec" {
-    command = <<-EOF
-      #!/bin/bash
+#  provisioner "local-exec" {
+#    command = <<-EOF
+#      #!/bin/bash
 #      sleep 10
-      curl -k -X ${var.rest_as3_method} https://${data.azurerm_public_ip.vm02mgmtpip.ip_address}${var.rest_as3_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm_as3_file}
-    EOF
-  }
+#      curl -k -X ${var.rest_as3_method} https://${data.azurerm_public_ip.vm02mgmtpip.ip_address}${var.rest_as3_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm_as3_file}
+#    EOF
+#  }
 }
 
 ## OUTPUTS ###
