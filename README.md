@@ -22,10 +22,10 @@ Run git clone to copy the Terraform files we need locally
 
     git clone https://github.com/mikeoleary/azure-aks-bigip.git
 
-
-<b>We will deploy this demo in 2 steps:</b>
-1. We will deploy the <b>infrastructure</b> which consists of Azure VNET and loadbalancer, AKS, and BIG-IP.
-2. We will deploy the <b>apps</b> onto the Kubernetes environment, including F5's CIS.
+> **_NOTE:_**  <b>We will deploy this demo in 2 steps:</b>
+>
+> 1. We will deploy the <b>infrastructure</b> which consists of Azure VNET and loadbalancer, AKS, and BIG-IP.
+> 2. We will deploy the <b>apps</b> onto the Kubernetes environment, including F5's CIS.
 
 Change directories to the infra folder. We will then need to update the file called variables.tf to reflect your own Service Principle details:
 
