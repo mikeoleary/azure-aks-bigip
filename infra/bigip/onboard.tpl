@@ -52,6 +52,7 @@ curl -L -o ${libs_dir}/$AS3_FN $AS3_URL
 sleep 20
 
 # Copy the RPM Pkg to the file location
+mkdir -p /var/config/rest/downloads/
 cp ${libs_dir}/*.rpm /var/config/rest/downloads/
 
 # Install Declarative Onboarding Pkg
