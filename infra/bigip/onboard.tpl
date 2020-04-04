@@ -55,6 +55,24 @@ sleep 20
 mkdir -p /var/config/rest/downloads/
 cp ${libs_dir}/*.rpm /var/config/rest/downloads/
 
+# Wait for BIG-IP endpoint to be ready for installing packages
+CNT=0
+while true
+do
+  STATUS=$(curl -u $CREDS -X GET -s -k -I http://localhost:8100/mgmt/shared/iapp/package-management-tasks | grep HTTP)
+  if [[ $STATUS == *"200"* ]]; then
+    echo "Got 200! Ready to install packages!"
+    break
+  elif [ $CNT -le 10 ]; then
+    echo "Status code: $STATUS   Not ready yet..."
+    CNT=$[$CNT+1]
+  else
+    echo "GIVE UP..."
+    break
+  fi
+  sleep 10
+done
+
 # Install Declarative Onboarding Pkg
 DATA="{\"operation\":\"INSTALL\",\"packageFilePath\":\"/var/config/rest/downloads/$DO_FN\"}"
 echo -e "\n"$(date) "Install DO Pkg"
