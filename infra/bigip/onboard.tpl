@@ -59,7 +59,7 @@ cp ${libs_dir}/*.rpm /var/config/rest/downloads/
 CNT=0
 while true
 do
-  STATUS=$(curl -u $CREDS -X GET -s -k -I http://localhost:8100/mgmt/shared/iapp/package-management-tasks | grep HTTP)
+  STATUS=$(curl -u $CREDS -X GET -s -k -I http://localhost:8100/mgmt/shared/iapp/package-management-tasks 2>&1 | grep HTTP)
   if [[ $STATUS == *"200"* ]]; then
     echo "Got 200! Ready to install packages!"
     break
@@ -87,7 +87,7 @@ curl -u $CREDS -X POST http://localhost:8100/mgmt/shared/iapp/package-management
 CNT=0
 while true
 do
-  STATUS=$(curl -u $CREDS -X GET -s -k -I https://localhost/mgmt/shared/declarative-onboarding | grep HTTP)
+  STATUS=$(curl -u $CREDS -X GET -s -k -I https://localhost/mgmt/shared/declarative-onboarding 2>&1 | grep HTTP)
   if [[ $STATUS == *"200"* ]]; then
     echo "Got 200! Declarative Onboarding is Ready!"
     break
@@ -105,7 +105,7 @@ done
 CNT=0
 while true
 do
-  STATUS=$(curl -u $CREDS -X GET -s -k -I https://localhost/mgmt/shared/appsvcs/info | grep HTTP)
+  STATUS=$(curl -u $CREDS -X GET -s -k -I https://localhost/mgmt/shared/appsvcs/info 2>&1 | grep HTTP)
   if [[ $STATUS == *"200"* ]]; then
     echo "Got 200! AS3 is Ready!"
     break
