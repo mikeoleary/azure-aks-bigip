@@ -459,7 +459,7 @@ resource "azurerm_virtual_machine" "f5vm02" {
   }
 }
 
-
+/*
 # Run Startup Script
 resource "azurerm_virtual_machine_extension" "f5vm01-run-startup-cmd" {
   name                 = "${var.environment}-f5vm01-run-startup-cmd"
@@ -471,12 +471,12 @@ resource "azurerm_virtual_machine_extension" "f5vm01-run-startup-cmd" {
   #resource_group_name  = "${var.rg_name}"
   #virtual_machine_name = "${azurerm_virtual_machine.f5vm01.name}"
   virtual_machine_id   = "${azurerm_virtual_machine.f5vm01.id}"
-  publisher            = "Microsoft.OSTCExtensions"
-  type                 = "CustomScriptForLinux"
-  type_handler_version = "1.2"
-  # publisher            = "Microsoft.Azure.Extensions"
-  # type                 = "CustomScript"
-  # type_handler_version = "2.0"
+  #publisher            = "Microsoft.OSTCExtensions"
+  #type                 = "CustomScriptForLinux"
+  #type_handler_version = "1.2"
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
 
   settings = <<SETTINGS
     {
@@ -495,12 +495,12 @@ resource "azurerm_virtual_machine_extension" "f5vm02-run-startup-cmd" {
   #resource_group_name  = "${var.rg_name}"
   #virtual_machine_name = "${azurerm_virtual_machine.f5vm02.name}"
   virtual_machine_id   = "${azurerm_virtual_machine.f5vm02.id}"
-  publisher            = "Microsoft.OSTCExtensions"
-  type                 = "CustomScriptForLinux"
-  type_handler_version = "1.2"
-  # publisher            = "Microsoft.Azure.Extensions"
-  # type                 = "CustomScript"
-  # type_handler_version = "2.0"
+  #publisher            = "Microsoft.OSTCExtensions"
+  #type                 = "CustomScriptForLinux"
+  #type_handler_version = "1.2"
+  publisher            = "Microsoft.Azure.Extensions"
+  type                 = "CustomScript"
+  type_handler_version = "2.0"
 
   settings = <<SETTINGS
     {
@@ -508,6 +508,8 @@ resource "azurerm_virtual_machine_extension" "f5vm02-run-startup-cmd" {
     }
   SETTINGS
 }
+*/
+
 # Run REST API for configuration
 resource "local_file" "vm01_do_file" {
   content     = "${data.template_file.vm01_do_json.rendered}"
@@ -521,8 +523,8 @@ resource "local_file" "vm02_do_file" {
 
 resource "null_resource" "f5vm01-run-REST" {
   depends_on = [
-    "azurerm_virtual_machine_extension.f5vm01-run-startup-cmd",
-    "azurerm_virtual_machine_extension.f5vm02-run-startup-cmd",
+    #"azurerm_virtual_machine_extension.f5vm01-run-startup-cmd",
+    #"azurerm_virtual_machine_extension.f5vm02-run-startup-cmd",
     "azurerm_network_interface_security_group_association.nsgassociation3",
     "azurerm_network_interface_security_group_association.nsgassociation4",
     "local_file.vm01_do_file"
@@ -551,8 +553,8 @@ resource "null_resource" "f5vm01-run-REST" {
 
 resource "null_resource" "f5vm02-run-REST" {
   depends_on = [
-    "azurerm_virtual_machine_extension.f5vm01-run-startup-cmd",
-    "azurerm_virtual_machine_extension.f5vm02-run-startup-cmd",
+    #"azurerm_virtual_machine_extension.f5vm01-run-startup-cmd",
+    #"azurerm_virtual_machine_extension.f5vm02-run-startup-cmd",
     "azurerm_network_interface_security_group_association.nsgassociation3",
     "azurerm_network_interface_security_group_association.nsgassociation4",
     "local_file.vm02_do_file"
@@ -581,17 +583,17 @@ resource "null_resource" "f5vm02-run-REST" {
 data "azurerm_public_ip" "vm01mgmtpip" {
   name                = "${azurerm_public_ip.vm01mgmtpip.name}"
   resource_group_name = "${var.rg_name}"
-  depends_on          = ["azurerm_virtual_machine_extension.f5vm01-run-startup-cmd"]
+  #depends_on          = ["azurerm_virtual_machine_extension.f5vm01-run-startup-cmd"]
 }
 data "azurerm_public_ip" "vm02mgmtpip" {
   name                = "${azurerm_public_ip.vm02mgmtpip.name}"
   resource_group_name = "${var.rg_name}"
-  depends_on          = ["azurerm_virtual_machine_extension.f5vm02-run-startup-cmd"]
+  #depends_on          = ["azurerm_virtual_machine_extension.f5vm02-run-startup-cmd"]
 }
 data "azurerm_public_ip" "lbpip" {
   name                = "${azurerm_public_ip.lbpip.name}"
   resource_group_name = "${var.rg_name}"
-  depends_on          = ["azurerm_virtual_machine_extension.f5vm02-run-startup-cmd"]
+  #depends_on          = ["azurerm_virtual_machine_extension.f5vm02-run-startup-cmd"]
 }
 
 output "sg_id" { value = "${azurerm_network_security_group.main.id}" }
