@@ -1,4 +1,5 @@
 provider "kubernetes" {
+  version = "=1.11.1"
   host                   = "${var.kube_host}"
   #username               = "${var.kube_username}"
   #password               = "${var.kube_password}"
@@ -9,6 +10,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
+  version = "=1.1.1"
   #install_tiller  = true
   #namespace = "${kubernetes_service_account.tiller.metadata[0].namespace}"
   #service_account = "${kubernetes_service_account.tiller.metadata[0].name}"
