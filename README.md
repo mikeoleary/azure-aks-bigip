@@ -87,5 +87,7 @@ The output of this command is a URL for you to visit. The demo is successful whe
 Finally, don't forget to delete your resources! Again - you'll need to type "yes" when prompted.
 
     terraform destroy
+    cd ../apps
+    terraform destroy
 
 Once in a while, Azure will destroy these resources without considering dependencies, and you'll see an error when you delete your resources. If this happens, just destroy again with the command above, or just delete the Azure Resource Group via the Azure portal.
