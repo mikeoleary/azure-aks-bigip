@@ -1,4 +1,5 @@
 provider "kubernetes" {
+  version = "=1.11.1"
   host                   = "${var.kube_host}"
   #username               = "${var.kube_username}"
   #password               = "${var.kube_password}"
