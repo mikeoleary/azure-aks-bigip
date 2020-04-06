@@ -33,7 +33,6 @@ resource "kubernetes_secret" "f5cis" {
     username = "admin"
     password = "${var.upassword}"
   }
-  #type = "kubernetes.io/service-account-token"
 }
 
 data "helm_repository" "f5-stable" {

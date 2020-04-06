@@ -247,8 +247,6 @@ resource "azurerm_network_interface" "vm02-int-nic" {
   name                = "${var.prefix}-vm02-int-nic"
   location                  = "${var.location}"
   resource_group_name       = "${var.rg_name}"
-  #network_security_group_id = "${azurerm_network_security_group.main.id}"
-
   ip_configuration {
     name                          = "primary"
     subnet_id                     = "${var.internal_subnet_id}"
@@ -459,57 +457,6 @@ resource "azurerm_virtual_machine" "f5vm02" {
   }
 }
 
-/*
-# Run Startup Script
-resource "azurerm_virtual_machine_extension" "f5vm01-run-startup-cmd" {
-  name                 = "${var.environment}-f5vm01-run-startup-cmd"
-  depends_on           = [
-    "azurerm_virtual_machine.f5vm01"
-  ]
-  #location             = "${var.region}"
-  #location             = "${var.location}"
-  #resource_group_name  = "${var.rg_name}"
-  #virtual_machine_name = "${azurerm_virtual_machine.f5vm01.name}"
-  virtual_machine_id   = "${azurerm_virtual_machine.f5vm01.id}"
-  #publisher            = "Microsoft.OSTCExtensions"
-  #type                 = "CustomScriptForLinux"
-  #type_handler_version = "1.2"
-  publisher            = "Microsoft.Azure.Extensions"
-  type                 = "CustomScript"
-  type_handler_version = "2.0"
-
-  settings = <<SETTINGS
-    {
-        "commandToExecute": "bash /var/lib/waagent/CustomData"
-    }
-  SETTINGS
-}
-
-resource "azurerm_virtual_machine_extension" "f5vm02-run-startup-cmd" {
-  name                 = "${var.environment}-f5vm02-run-startup-cmd"
-  depends_on           = [
-    "azurerm_virtual_machine.f5vm02"
-    ]
-  #location             = "${var.region}"
-  #location             = "${var.location}"
-  #resource_group_name  = "${var.rg_name}"
-  #virtual_machine_name = "${azurerm_virtual_machine.f5vm02.name}"
-  virtual_machine_id   = "${azurerm_virtual_machine.f5vm02.id}"
-  #publisher            = "Microsoft.OSTCExtensions"
-  #type                 = "CustomScriptForLinux"
-  #type_handler_version = "1.2"
-  publisher            = "Microsoft.Azure.Extensions"
-  type                 = "CustomScript"
-  type_handler_version = "2.0"
-
-  settings = <<SETTINGS
-    {
-        "commandToExecute": "bash /var/lib/waagent/CustomData"
-    }
-  SETTINGS
-}
-*/
-
 # Run REST API for configuration
 resource "local_file" "vm01_do_file" {
   content     = "${data.template_file.vm01_do_json.rendered}"
@@ -523,10 +470,8 @@ resource "local_file" "vm02_do_file" {
 
 resource "null_resource" "f5vm01-run-REST" {
   depends_on = [
-    #"azurerm_virtual_machine_extension.f5vm01-run-startup-cmd",
-    #"azurerm_virtual_machine_extension.f5vm02-run-startup-cmd",
-    "azurerm_network_interface_security_group_association.nsgassociation3",
-    "azurerm_network_interface_security_group_association.nsgassociation4",
+    "azurerm_network_interface_security_group_association.nsgassociation1",
+    "azurerm_network_interface_security_group_association.nsgassociation2",
     "local_file.vm01_do_file"
     ]
   # Running DO REST API
@@ -536,27 +481,15 @@ resource "null_resource" "f5vm01-run-REST" {
       curl -k -X GET https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_do_uri} -u ${var.uname}:${var.upassword}
       sleep 10
       curl -k -X ${var.rest_do_method} https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_do_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm01_do_file}
-      #sleep for 3 mins. This gives BIG-IP vm01 time to complete it's device configuration before vm02 configures itself for the cluster. 
-      #sleep 300
     EOF
   }
 
-  # Running AS3 REST API
-#  provisioner "local-exec" {
-#    command = <<-EOF
-      #!/bin/bash
-#      sleep 15
-#      curl -k -X ${var.rest_as3_method} https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_as3_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm_as3_file}
-#    EOF
-#  }
 }
 
 resource "null_resource" "f5vm02-run-REST" {
   depends_on = [
-    #"azurerm_virtual_machine_extension.f5vm01-run-startup-cmd",
-    #"azurerm_virtual_machine_extension.f5vm02-run-startup-cmd",
-    "azurerm_network_interface_security_group_association.nsgassociation3",
-    "azurerm_network_interface_security_group_association.nsgassociation4",
+    "azurerm_network_interface_security_group_association.nsgassociation1",
+    "azurerm_network_interface_security_group_association.nsgassociation2",
     "local_file.vm02_do_file"
     ]
   # Running DO REST API
@@ -569,31 +502,20 @@ resource "null_resource" "f5vm02-run-REST" {
     EOF
   }
 
-  # Running AS3 REST API
-#  provisioner "local-exec" {
-#    command = <<-EOF
-#      #!/bin/bash
-#      sleep 10
-#      curl -k -X ${var.rest_as3_method} https://${data.azurerm_public_ip.vm02mgmtpip.ip_address}${var.rest_as3_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm_as3_file}
-#    EOF
-#  }
 }
 
 ## OUTPUTS ###
 data "azurerm_public_ip" "vm01mgmtpip" {
   name                = "${azurerm_public_ip.vm01mgmtpip.name}"
   resource_group_name = "${var.rg_name}"
-  #depends_on          = ["azurerm_virtual_machine_extension.f5vm01-run-startup-cmd"]
 }
 data "azurerm_public_ip" "vm02mgmtpip" {
   name                = "${azurerm_public_ip.vm02mgmtpip.name}"
   resource_group_name = "${var.rg_name}"
-  #depends_on          = ["azurerm_virtual_machine_extension.f5vm02-run-startup-cmd"]
 }
 data "azurerm_public_ip" "lbpip" {
   name                = "${azurerm_public_ip.lbpip.name}"
   resource_group_name = "${var.rg_name}"
-  #depends_on          = ["azurerm_virtual_machine_extension.f5vm02-run-startup-cmd"]
 }
 
 output "sg_id" { value = "${azurerm_network_security_group.main.id}" }

@@ -8,12 +8,6 @@ output "kube_config" {
 output "kube_host" {
   value = azurerm_kubernetes_cluster.akscluster1.kube_config.0.host
 }
-output "kube_username" {
-    value = azurerm_kubernetes_cluster.akscluster1.kube_config.0.username
-}
-output "kube_password" {
-    value = azurerm_kubernetes_cluster.akscluster1.kube_config.0.username
-}
 output "client_key" {
     value = base64decode(azurerm_kubernetes_cluster.akscluster1.kube_config.0.client_key)
 }

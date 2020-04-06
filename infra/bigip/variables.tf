@@ -61,9 +61,7 @@ variable costcenter     { default = "f5costcenter" }
 variable application    { default = "f5app"        }
 # REST API Setting
 variable rest_do_uri { default  = "/mgmt/shared/declarative-onboarding" }
-variable rest_as3_uri { default = "/mgmt/shared/appsvcs/declare" }
 variable rest_do_method { default = "POST" }
 variable rest_as3_method { default = "POST" }
 variable rest_vm01_do_file {default = "vm01_do_data.json" }
 variable rest_vm02_do_file {default = "vm02_do_data.json" }
-#variable rest_vm_as3_file {default = "vm_as3_data.json" }
