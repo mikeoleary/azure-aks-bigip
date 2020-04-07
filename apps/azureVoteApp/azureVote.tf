@@ -1,6 +1,6 @@
 resource "null_resource" "dependency_getter" {
   provisioner "local-exec" {
-    command = "echo ${length(var.dependencies)}"
+    command = "sleep 20 && echo ${length(var.dependencies)}"
   }
 }
 
