@@ -84,10 +84,14 @@ The output of this command is a URL for you to visit. The demo is successful whe
 
 ![Demo App](/images/demoapp.png)
 
-Finally, don't forget to delete your resources! Again - you'll need to type "yes" when prompted.
+Finally, don't forget to delete your resources! Again - you'll need to type "yes" when prompted. Let's ensure we delete the resources from the "apps" directory and then from the "infra" directory.
 
-    terraform destroy
     cd ../apps
+    terraform destroy
+    
+And now back to the /infra directory and destroy those resources too.
+
+    cd ../infra
     terraform destroy
 
 Once in a while, Azure will destroy these resources without considering dependencies, and you'll see an error when you delete your resources. If this happens, just destroy again with the command above, or just delete the Azure Resource Group via the Azure portal.
