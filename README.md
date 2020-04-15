@@ -1,14 +1,28 @@
 # azure-aks-bigip-terraform
 Deploys Azure AKS app protected by BIG-IP for demo use
-## Purpose and Overview<br> <br> 
+
+Table of contents
+=================
+
+<!--ts-->
+   * [Purpose and Overview](#purpose-and-overview)
+   * [Architecture](#architecture)
+   * [Prerequisites](#prerequisites)
+   * [Instructions](#instructions)
+      * [Deploy Infrastructure](#deploy-infrastructure)
+      * [Deploy Application](#deploy-application)
+   * [Conclusion](#conclusion)
+   * [Support](#support)
+<!--te-->
+## Purpose and Overview
 This demo will configure a demo environment, running Kubernetes (AKS) and a demo app composed of microservices. This web application will be exposed to the internet via a HA-pair of BIG-IP devices. The pods running in AKS will have ephemeral, changing IP addresses every time this demo is run, however the BIG-IP is configured by F5 CIS, which runs inside Kubernetes and constantly updates the BIG-IP.
 
 The final step of this demo is to view the web application from the internet. The URL to visit will be output in the Terraform outputs after the successful provisioning of the environment.
 
-## Architecture<br> <br> 
+## Architecture
 ![Image of Architecture](images/azure-aks-terraform.png)
 
-## Pre-requisites
+## Prerequisites
 1. <b>You will need a Terraform client.</b> 
 I personally use an Ubuntu 18.04 machine and for this demo I used Terraform version 0.12.23. __If you are using a different version of Terraform and have issues, please deploy version 0.12.23 to rule out version issues.__
 2. <b>You need details of a ServicePrincipal in Azure.</b>
@@ -27,6 +41,7 @@ Run git clone to copy the Terraform files we need locally
 > 1. We will deploy the <b>infrastructure</b> which consists of Azure VNET and loadbalancer, AKS, and BIG-IP.
 > 2. We will deploy the <b>apps</b> onto the Kubernetes environment, including F5's CIS.
 
+### Deploy Infrastructure
 Change directories to the infra folder. We will then need to update the file called variables.tf to reflect your own Service Principle details:
 
     cd azure-aks-bigip/infra
@@ -65,6 +80,9 @@ Now let's run Terraform and build infrastructure! You will need to type "yes" at
     terraform plan
     terraform apply 
 
+Note: it may help to <b>wait 2 mins at this point</b> before running the commands in the next step. The BIG-IPs have just been provisioned and we want to be sure they are up and running before sending them REST calls via the next steps.
+
+### Deploy Application
 Now let's <b>change directories</b> and run Terraform and build apps!
 
     cd ../apps/
@@ -95,3 +113,10 @@ And now back to the /infra directory and destroy those resources too.
     terraform destroy
 
 Once in a while, Azure will destroy these resources without considering dependencies, and you'll see an error when you delete your resources. If this happens, just destroy again with the command above, or just delete the Azure Resource Group via the Azure portal.
+
+## Conclusion
+Thanks for reading. This demo was intended to show how F5 Container Ingress Services can work with Azure AKS.
+
+## Support
+This repo is not supported by F5. It is a demo that I have put together personally, but I'd be happy if you could submit issues via GitHub.
+    
