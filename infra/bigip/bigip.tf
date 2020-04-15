@@ -478,6 +478,7 @@ resource "null_resource" "f5vm01-run-REST" {
   provisioner "local-exec" {
     command = <<-EOF
       #!/bin/bash
+      sleep 15
       curl -k -X GET https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_do_uri} -u ${var.uname}:${var.upassword}
       sleep 10
       curl -k -X ${var.rest_do_method} https://${data.azurerm_public_ip.vm01mgmtpip.ip_address}${var.rest_do_uri} -u ${var.uname}:${var.upassword} -d @./${path.module}/${var.rest_vm01_do_file}
